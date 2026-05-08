@@ -2,79 +2,26 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- AFRAME -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <!-- MINDAR -->
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-  <!-- Transparent Video Shader -->
-  <script src="https://unpkg.com/aframe-transparent-video-shader@1.0.3/dist/aframe-transparent-video-shader.umd.js"></script>
-
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-
-    .start-button {
-      position: fixed;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      padding: 15px 25px;
-      background-color: #ff5722;
-      color: white;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      z-index: 999;
-      display: none;
-    }
-  </style>
 </head>
 
 <body>
 
-<button class="start-button" id="startBtn">
-  Press to See the Magic
-</button>
-
 <a-scene
   mindar-image="imageTargetSrc: 1.mind;"
   color-space="sRGB"
-  renderer="colorManagement: true, physicallyCorrectLights"
+  embedded
   vr-mode-ui="enabled: false"
   device-orientation-permission-ui="enabled: false"
-  embedded
 >
-
-  <a-assets>
-    <video
-      id="mivideo"
-      src="stage.webm"
-      playsinline
-      webkit-playsinline
-      crossorigin="anonymous"
-      muted
-      loop
-    ></video>
-  </a-assets>
 
   <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
   <a-entity mindar-image-target="targetIndex: 0">
 
-    <a-video
-      id="video-plane"
-      src="#mivideo"
-      material="shader: transparent-video;"
-      position="0 0 0"
-      width="2"
-      height="1"
-      visible="false"
-    >
-    </a-video>
+    <a-box color="red" depth="0.1" height="1" width="1"></a-box>
 
   </a-entity>
 
@@ -82,53 +29,14 @@
 
 <script>
 
-const video = document.querySelector("#mivideo");
-const startBtn = document.getElementById("startBtn");
-const videoPlane = document.querySelector("#video-plane");
-const target = document.querySelector("[mindar-image-target]");
-
-let started = false;
-
-target.addEventListener("targetFound", () => {
-
-  console.log("Target Found");
-
-  videoPlane.setAttribute("visible", true);
-
-  if (!started) {
-    startBtn.style.display = "block";
-  } else {
-    video.play();
-  }
+document.querySelector("a-scene").addEventListener("arReady", () => {
+  console.log("AR READY");
+  alert("AR READY");
 });
 
-target.addEventListener("targetLost", () => {
-
-  console.log("Target Lost");
-
-  video.pause();
-
-  videoPlane.setAttribute("visible", false);
-});
-
-startBtn.addEventListener("click", async () => {
-
-  try {
-
-    video.muted = false;
-
-    await video.play();
-
-    started = true;
-
-    startBtn.style.display = "none";
-
-  } catch(e) {
-
-    console.log(e);
-
-  }
-
+document.querySelector("a-scene").addEventListener("arError", (e) => {
+  console.log("AR ERROR", e);
+  alert("AR ERROR");
 });
 
 </script>
